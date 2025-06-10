@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motor Control</title>
+</head>
+<body>
+
+    <h1>Motor Control</h1>
+
+    <button onclick="reset()">Reset</button>
+
+    {% for ratio_key, ratio_value in saved_ratios.items() %}
+    <button onclick="setPosition({{ ratio_value }})">{{ ratio_key }}</button>
+    {% endfor %}
+
+    <p>Manual Control:</p>
+    <p>Slider value: <span id="demo"></span></p>
+    <input type="range" id="manual-slider" min="{{reset_steps}}" max="{{max_steps}}" value="0">
+    <button onclick="manualControl('up')">Manual Up</button>
+    <button onclick="manualControl('down')">Manual Down</button>
+
+    <script>
+        var slider = document.getElementById("manual-slider");
+        var output = document.getElementById("demo");
+        output.innerHTML = slider.value;
+
+        slider.oninput = function () {
+            output.innerHTML = this.value;
+        }
+
+        function reset() {
+            fetch('/reset');
+        }
+
+        function setPosition(ratioSteps) {
+            fetch(`/position/${ratioSteps}`);
+        }
+
+        function manualControl(direction) {
+            var sliderValue = slider.value;
+            fetch(`/manual/${direction}/${sliderValue}`);
+        }
+    </script>
+
+</body>
+</html>
